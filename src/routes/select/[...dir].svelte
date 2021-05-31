@@ -19,7 +19,10 @@
         </ul>
         Pipeline {isPipeline ? "" : "not "} detected!
     </div>
-    <div class="pipeline" bind:this={refElement}></div>
+    <div class="pipeline">
+        <Pipeline {edges} {vertices}/>
+    </div>
+    
 </main>
 
 <script lang="ts" context="module">
@@ -37,11 +40,7 @@
 
 <script lang="ts">
     import { page } from "$app/stores"
-    import cytoscape from "cytoscape"
-    import dagre from 'cytoscape-dagre'
-    import { onMount } from "svelte";
-
-    let refElement = null
+    import Pipeline from "$lib/Pipeline.svelte"
 
     export let dirs;
     export let files;
@@ -59,9 +58,9 @@
                     }
                 }
             }) : []
-    $: edges = isPipeline ? files.filter(file => file.endsWith(".log"))
+    $: edges = isPipeline ? files.filter(file => file.startsWith("l_"))
             .map(edge => {
-                const [source, target, label] = edge.match(/l_(\d+)-(\d+)-(.+).log/).slice(1)
+                const [source, target, label] = edge.match(/l_(\d+)-(\d+)-(.+)\..+/).slice(1)
                 return {
                     data: {
                         source,
@@ -70,32 +69,6 @@
                     }
                 }
             }) : []
-
-    onMount(() => {
-
-        cytoscape.use(dagre)
-        var cy = cytoscape({
-            container: refElement,
-            elements: [
-                ...vertices,
-                ...edges
-            ],
-            layout: {
-                name: 'breadthfirst',
-            },
-            style: [
-                {
-                    selector: 'node',
-                    style: {
-                        'label': 'data(label)'
-                    }
-                }
-            ]
-        })
-
-    })
-
-
 
 </script>
 
@@ -112,8 +85,6 @@
 
     .pipeline {
         grid-column: 2 / 2;
-        background-color: white;
-        height: 800px;
     }
 
 </style>
