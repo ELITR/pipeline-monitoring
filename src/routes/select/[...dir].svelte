@@ -43,31 +43,59 @@
 
     let refElement = null
 
-    onMount(() => {
-
-        cytoscape.use(dagre)
-        var cy = cytoscape({
-            container: refElement,
-            elements: [ // list of graph elements to start with
-                { // node a
-                data: { id: 'a' }
-                },
-                { // node b
-                data: { id: 'b' }
-                },
-                { // edge ab
-                data: { id: 'ab', source: 'a', target: 'b' }
-                }
-            ],
-        })
-
-    })
-
     export let dirs;
     export let files;
 
     $: previousDir = $page.params.dir?.split("/").slice(0, -1).join("/") || "/"
     $: isPipeline = ["pid", "log", "err"].every(suffix => files.map(f => f.split(".").pop()).some(s => s == suffix))
+
+    $: vertices = isPipeline ? files.filter(file => file.endsWith(".err"))
+            .map(node => {
+                const [id, label] = node.match(/(\d+)-(.+).err/).slice(1)
+                return {
+                    data: {
+                        id,
+                        label
+                    }
+                }
+            }) : []
+    $: edges = isPipeline ? files.filter(file => file.endsWith(".log"))
+            .map(edge => {
+                const [source, target, label] = edge.match(/l_(\d+)-(\d+)-(.+).log/).slice(1)
+                return {
+                    data: {
+                        source,
+                        target,
+                        label
+                    }
+                }
+            }) : []
+
+    onMount(() => {
+
+        cytoscape.use(dagre)
+        var cy = cytoscape({
+            container: refElement,
+            elements: [
+                ...vertices,
+                ...edges
+            ],
+            layout: {
+                name: 'breadthfirst',
+            },
+            style: [
+                {
+                    selector: 'node',
+                    style: {
+                        'label': 'data(label)'
+                    }
+                }
+            ]
+        })
+
+    })
+
+
 
 </script>
 
@@ -85,5 +113,7 @@
     .pipeline {
         grid-column: 2 / 2;
         background-color: white;
+        height: 800px;
     }
+
 </style>
