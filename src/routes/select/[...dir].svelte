@@ -4,10 +4,10 @@
 
         <h2>Directory {$page.params.dir}</h2>
         <ul>
-            {#each dirs as dir}
+            {#each displayedDirs as dir}
             <li>
-                <a href={`/select/${dir}`}>
-                    {dir}
+                <a href={`/select/${dir.path}`}>
+                    {dir.name}
                 </a>
             </li>
             {/each}
@@ -47,6 +47,9 @@
 
     $: previousDir = $page.params.dir?.split("/").slice(0, -1).join("/") || "/"
     $: isPipeline = ["pid", "log", "err"].every(suffix => files.map(f => f.split(".").pop()).some(s => s == suffix))
+    $: displayedDirs = dirs.map(dir => { return { path: dir, name: dir.split("/").reverse()[1] + "/" } });
+
+    console.log(dirs)
 
     $: vertices = isPipeline ? files.filter(file => file.endsWith(".err"))
             .map(node => {
