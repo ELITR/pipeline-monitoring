@@ -27,7 +27,7 @@ jobs:
       
       # Install
       - name: install
-        run: npm run install
+        run: npm install
         
       # Building the app
       - name: build
