@@ -1,11 +1,11 @@
 <script lang="ts" context="module">
 	export async function load({ fetch, page }) {
 		const dirs = await fetch(`/dirs.json?dir=${page.params.dir}`);
-		const files = await fetch(`/files.json?dir=${page.params.dir}`);
+		const pipeline = await fetch(`/pipeline.json?dir=${page.params.dir}`);
 		return {
 			props: {
 				dirs: await dirs.json(),
-				files: await files.json()
+				pipeline: await pipeline.json()
 			}
 		};
 	}
@@ -25,10 +25,8 @@
 		return { path: dir, name: dir.split('/').reverse()[1] + '/' };
 	});
 
-	console.log(dirs);
-
 	$: vertices = pipeline.pids.map((pid) => {
-		const [id, label] = pid.name.match(/(\d+)-(.+).err/).slice(1);
+		const [id, label] = pid.name.match(/(\d+)-(.+).pid/).slice(1);
 		return {
 			data: {
 				id,
