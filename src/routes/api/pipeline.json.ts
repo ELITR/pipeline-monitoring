@@ -22,11 +22,11 @@ export const get: RequestHandler = async (request) => {
 		await bash(`find ${dir} -maxdepth 1 -name "*.log" -o -name "*.data"`)
 	).filter((file) => path.basename(file).match(/l_\d+-\d+.*\.(log|data)/));
 	const logFileStatuses = await logFileList.map(async (logFile) => {
-		const modified = await bash(`date -r ${logFile} +"%Y-%m-%dT%H:%M:%S"`);
+		const modified = await bash(`stat -c '%Y' ${logFile}`);
 		const size = await bash(`du -s ${logFile} | cut -f1`);
 		return {
 			name: path.basename(logFile),
-			modified: new Date(modified[0]),
+			modified: Number(modified[0]),
 			size: Number(size[0])
 		} as LogStatus;
 	});

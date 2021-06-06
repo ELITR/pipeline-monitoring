@@ -34,7 +34,9 @@
 						style: {
 							'target-arrow-shape': 'triangle',
 							'curve-style': 'bezier',
-							'arrow-scale': 2
+							'arrow-scale': 2,
+							'line-color': 'data(color)',
+							'target-arrow-color': 'data(color)'
 						}
 					}
 				]

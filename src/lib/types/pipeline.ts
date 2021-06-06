@@ -10,6 +10,6 @@ export type PidStatus = {
 
 export type LogStatus = {
 	name: string;
-	modified: Date;
+	modified: number;
 	size: number;
 };
