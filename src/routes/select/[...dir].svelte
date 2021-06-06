@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
 	export async function load({ fetch, page }) {
-		const dirs = await fetch(`/dirs.json?dir=${page.params.dir}`);
-		const pipeline = await fetch(`/pipeline.json?dir=${page.params.dir}`);
+		const dirs = await fetch(`/api/dirs.json?dir=${page.params.dir}`);
+		const pipeline = await fetch(`/api/pipeline.json?dir=${page.params.dir}`);
 		return {
 			props: {
 				dirs: await dirs.json(),
@@ -15,9 +15,18 @@
 	import { page } from '$app/stores';
 	import Graph from '$lib/components/Graph.svelte';
 	import type { Pipeline } from '$lib/types/pipeline';
+	import { onMount } from 'svelte';
 
 	export let dirs: string[];
 	export let pipeline: Pipeline;
+
+	// Periodically fetch new pipeline status
+	onMount(async () => {
+		while (isPipeline) {
+			pipeline = await (await fetch(`/api/pipeline.json?dir=${$page.params.dir}`)).json();
+			await new Promise((res) => setTimeout(res, 1000));
+		}
+	});
 
 	$: previousDir = $page.params.dir?.split('/').slice(0, -1).join('/') || '/';
 	$: isPipeline = pipeline.logs.length > 0 || pipeline.pids.length > 0;
@@ -26,7 +35,6 @@
 	});
 
 	$: nodes = pipeline.pids.map((pid) => {
-		console.log(pid);
 		const [id, label] = pid.name.match(/(\d+)-(.+).pid/).slice(1);
 		return {
 			data: {
@@ -40,6 +48,7 @@
 		const [source, target, label] = log.name.match(/l_(\d+)-(\d+)-(.+)\..+/).slice(1);
 		return {
 			data: {
+				id: `${source}_${label}`,
 				source,
 				target,
 				label

@@ -11,10 +11,10 @@ export const get: RequestHandler = async (request) => {
 	const pids = await bash(`ps -ef | awk '{print $2}'`);
 
 	const pidStatuses = pidFileList.map(async (pidfile) => {
-		const pid = await bash(`cat ${pidfile}`)[0];
+		const pid = await bash(`cat ${pidfile}`);
 		return {
 			name: path.basename(pidfile),
-			alive: pids.includes(pid)
+			alive: pids.includes(pid[0])
 		} as PidStatus;
 	});
 
