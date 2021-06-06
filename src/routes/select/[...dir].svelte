@@ -25,12 +25,14 @@
 		return { path: dir, name: dir.split('/').reverse()[1] + '/' };
 	});
 
-	$: vertices = pipeline.pids.map((pid) => {
+	$: nodes = pipeline.pids.map((pid) => {
+		console.log(pid);
 		const [id, label] = pid.name.match(/(\d+)-(.+).pid/).slice(1);
 		return {
 			data: {
 				id,
-				label
+				label,
+				color: pid.alive ? '#33cc33' : '#ff0000'
 			}
 		};
 	});
@@ -64,7 +66,7 @@
 		Pipeline {isPipeline ? '' : 'not '} detected!
 	</div>
 	<div class="pipeline">
-		<Graph {edges} {vertices} />
+		<Graph {edges} {nodes} />
 	</div>
 </main>
 
