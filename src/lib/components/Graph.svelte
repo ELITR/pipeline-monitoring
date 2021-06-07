@@ -9,11 +9,12 @@
 
 	export let nodes;
 	export let edges;
+	export let selectedEdge = '';
 
 	// Cytoscape needs to know the size of the element it's being mounted to (so it can calculate the positions of the graph)
 	afterUpdate(() => {
 		try {
-			cytoscape({
+			const cy = cytoscape({
 				container: refElement,
 				elements: [...nodes, ...edges],
 				layout: {
@@ -40,6 +41,9 @@
 						}
 					}
 				]
+			});
+			cy.on('click', 'edge', (event) => {
+				selectedEdge = event.target.id();
 			});
 		} catch (e) {
 			console.log(e);
