@@ -20,7 +20,8 @@ npm run build
 > You can preview the built app with `npm run preview`, regardless of whether you installed an adapter. This should _not_ be used to serve your app in production.
 
 ## Usage
-Navigate to `localhost:3000/select` and traverse to the folder with the generated pipeline. You should see a graph. Nodes represent components, edges represent the connections between them. If the node is red, it's dead (it's saved PID is not present). If it's green, it's running. 
+
+Navigate to `localhost:3000/select` and traverse to the folder with the generated pipeline. You should see a graph. Nodes represent components, edges represent the connections between them. If the node is red, it's dead (it's saved PID is not present). If it's green, it's running.
 
 The edge color also represents if the data flow is okay or not. Recall that an edge is also represented by a log file, where all data transferred on that edge are logged to. Currently, a crude metric is used: the application keeps track of the last five modification dates of the log file. From these modifications, the average time between modifications is computed. Then, if the duration between the current time and the last modification is less than two times the average modification time, the edge is colored green, otherwise it's colored red.
 
