@@ -109,7 +109,6 @@
 		]
 	};
 
-	$: console.log($logHistory.get(selectedEdge)?.[0]);
 </script>
 
 <main class="container">

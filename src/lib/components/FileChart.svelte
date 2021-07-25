@@ -22,7 +22,6 @@
 		const chart = new ChartJS(node, initialOptions);
 		return {
 			update(data) {
-				console.log(data);
 				chart.data = Object.assign({}, data);
 				chart.update();
 			},
